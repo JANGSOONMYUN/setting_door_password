@@ -1,0 +1,120 @@
+#include "AT89X52.h"
+#include "Dr_Kim KIT (SIC80-300).h" //C:\Keil\C51\INC\Atmel 폴더에 복사한다.
+
+unsigned char fnd[]={0xc0,0xf9,0xa4,0xb0,0x99,0x92,0x82,0xf8,0x80,0x98,0x00};
+void delay (int del);
+	sbit sw1=P1^0;
+	sbit sw2=P1^1;
+	sbit sw3=P1^2;
+	sbit sw4=P1^3;
+	sbit sw5=P1^4;
+	sbit sw6=P1^5;
+	sbit sw7=P3^0;
+	sbit sw8=P3^1;
+	sbit sw9=P3^2;
+	sbit sw0=P3^4;
+	sbit swstar=P3^3;
+	sbit swpound=P3^5;
+	sbit buz=P1^7;
+void main (void)
+{
+	unsigned char a=0,b=0,c,i;
+	unsigned char pattern1[4]={1,1,1,1};   //번호 등록
+	unsigned char pattern2[4]={0,0,0,0};   //번호 검증
+	P1=0xff; P2=0xff; P3=0xff; buz=1;
+
+initialize_io(); //I/O Port 초기화-> Dr_Kim KIT (SIC80-300).h
+initialize_graphic_lcd(); //LCD 초기화
+
+ do{
+	 a=0;b=0;
+	 P2=0xff;
+	 if(swpound==0)    //번호 등록 시작
+	 while(1)
+	 {
+	 P2=0xff;
+	 if(swstar==0)     //별표
+	 while(a<4)        //네자리 입력
+	 {
+		 
+	 if(sw1==0){P2=fnd[1]; pattern1[a]=1;a++;buz=0;delay(2000);buz=1;while(sw1==0){}} 
+	 if(sw2==0){P2=fnd[2]; pattern1[a]=2;a++;buz=0;delay(2000);buz=1;while(sw2==0){}} 
+	 if(sw3==0){P2=fnd[3]; pattern1[a]=3;a++;buz=0;delay(2000);buz=1;while(sw3==0){}} 
+	 if(sw4==0){P2=fnd[4]; pattern1[a]=4;a++;buz=0;delay(2000);buz=1;while(sw4==0){}} 
+	 if(sw5==0){P2=fnd[5]; pattern1[a]=5;a++;buz=0;delay(2000);buz=1;while(sw5==0){}} 
+	 if(sw6==0){P2=fnd[6]; pattern1[a]=6;a++;buz=0;delay(2000);buz=1;while(sw6==0){}} 
+	 if(sw7==0){P2=fnd[7]; pattern1[a]=7;a++;buz=0;delay(2000);buz=1;while(sw7==0){}} 
+	 if(sw8==0){P2=fnd[8]; pattern1[a]=8;a++;buz=0;delay(2000);buz=1;while(sw8==0){}} 
+	 if(sw0==0){P2=fnd[0]; pattern1[a]=0;a++;buz=0;delay(2000);buz=1;while(sw0==0){}} 
+	 if(sw9==0){P2=fnd[9]; pattern1[a]=9;a++;buz=0;delay(2000);buz=1;while(sw9==0){}} 
+	delay(1000);
+	 P2=0xff;
+		 
+	 }
+	 if(a==4)
+	 if(swstar==0){while(swstar==0){}break;}//별표 마무리
+	 }
+    
+	
+	if(swstar==0)  //번호 검증 시작   별표
+	while(1)     
+	{    		   //네자리
+	if(sw1==0){P2=fnd[1]; pattern2[a]=1;a++;buz=0;delay(2000);buz=1;while(sw1==0){}} 
+	if(sw2==0){P2=fnd[2]; pattern2[a]=2;a++;buz=0;delay(2000);buz=1;while(sw2==0){}} 
+	if(sw3==0){P2=fnd[3]; pattern2[a]=3;a++;buz=0;delay(2000);buz=1;while(sw3==0){}} 
+	if(sw4==0){P2=fnd[4]; pattern2[a]=4;a++;buz=0;delay(2000);buz=1;while(sw4==0){}} 
+	if(sw5==0){P2=fnd[5]; pattern2[a]=5;a++;buz=0;delay(2000);buz=1;while(sw5==0){}} 
+	if(sw6==0){P2=fnd[6]; pattern2[a]=6;a++;buz=0;delay(2000);buz=1;while(sw6==0){}} 
+	if(sw7==0){P2=fnd[7]; pattern2[a]=7;a++;buz=0;delay(2000);buz=1;while(sw7==0){}} 
+	if(sw8==0){P2=fnd[8]; pattern2[a]=8;a++;buz=0;delay(2000);buz=1;while(sw8==0){}} 
+	if(sw0==0){P2=fnd[0]; pattern2[a]=0;a++;buz=0;delay(2000);buz=1;while(sw0==0){}} 
+	if(sw9==0){P2=fnd[9]; pattern2[a]=9;a++;buz=0;delay(2000);buz=1;while(sw9==0){}} 
+	delay(1000);
+	P2=0xff;
+	if(a==4)
+		while(b<4)
+			{
+				a=0;
+			if(swstar==0)
+			{
+				while(swstar==0){}
+				while(1)  //검증
+				{ 
+				if(pattern1[b]!=pattern2[b])   //틀릴 경우 부저
+				{buz=0;delay(30000);delay(30000);delay(30000);delay(30000);buz=1;b=4;break; for(i=0;i<4;i++)pattern2[i]=0;}	
+				if(pattern1[b]==pattern2[b])  //맞을경우 b증가
+				b++;
+				if(b==3)
+				 if(pattern1[b]==pattern2[b])   //전부 맞을 경우 LED 5번 깜빡임
+				 {b=4;
+					 for(c=0;c<5;c++)
+					{P0=0x00;
+					delay(10000);
+				    P0=0xff; 
+					delay(10000);}
+				}
+				if(b==4)
+				{
+					for(i=0;i<4;i++)
+				     pattern2[i]=0;
+					break;
+				}
+				    
+     }
+				if(b==4)		break;
+			}
+			}	//별표 마무리
+	P2=0xff;	//초기화
+	if(b==4)
+		break;
+	}
+	
+	
+ }while(1);
+}
+			
+
+void delay (int del)
+{
+    while(del--);
+}
